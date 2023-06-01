@@ -30,6 +30,18 @@ std::vector<int64_t> CreateThreadCountRange() {
   return range;
 }
 
+static void BM_SingleThreadSum(benchmark::State &state) {
+  for (auto _ : state) {
+    Range *range = NewRange(1, state.range(0));
+    SingleThreadSum(range);
+  }
+}
+// Register the function as a benchmark
+BENCHMARK(BM_SingleThreadSum)
+    ->RangeMultiplier(kMultiplier)
+    ->Range(kStart, kEnd)
+    ->UseRealTime();
+
 static void BM_MultithreadedSum(benchmark::State &state) {
   for (auto _ : state) {
     Range *range = NewRange(1, state.range(0));
@@ -41,18 +53,6 @@ BENCHMARK(BM_MultithreadedSum)
     ->RangeMultiplier(kMultiplier)
     ->ArgsProduct({benchmark::CreateRange(kStart, kEnd, kMultiplier),
                    CreateThreadCountRange()})
-    ->UseRealTime();
-
-static void BM_SingleThreadSum(benchmark::State &state) {
-  for (auto _ : state) {
-    Range *range = NewRange(1, state.range(0));
-    SingleThreadSum(range);
-  }
-}
-// Register the function as a benchmark
-BENCHMARK(BM_SingleThreadSum)
-    ->RangeMultiplier(kMultiplier)
-    ->Range(kStart, kEnd)
     ->UseRealTime();
 
 } // namespace
