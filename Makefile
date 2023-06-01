@@ -3,7 +3,11 @@ main_binary = sum_ints_main.out
 benchmark = sum_ints_benchmark.out
 c_standard = c17
 cpp_standard = c++17
-benchmark_stats=c_benchmark_stats_$(shell date +"%Y%m%d_%H%M%S").csv
+benchmark_stats_base_name=c_benchmark_stats_$(shell date +"%Y%m%d_%H%M%S")
+benchmark_stats=$(benchmark_stats_base_name).csv
+benchmark_aggregates=$(benchmark_stats_base_name)_aggregates.dat
+CC = clang
+CXX = clang++
 
 run_benchmark: $(benchmark)
 	./$(benchmark) --benchmark_time_unit=us
@@ -15,7 +19,8 @@ stats: $(benchmark)
 		--benchmark_enable_random_interleaving \
 		--benchmark_display_aggregates_only \
 		--benchmark_out_format=csv \
-		--benchmark_out=./$(benchmark_stats)
+		--benchmark_out=./$(benchmark_stats) &> $(benchmark_aggregates) &
+	tail -f $(benchmark_aggregates)
 
 run_main: $(main_binary)
 	./$(main_binary)
