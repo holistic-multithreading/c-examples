@@ -19,8 +19,7 @@ stats: $(benchmark)
 		--benchmark_enable_random_interleaving \
 		--benchmark_display_aggregates_only \
 		--benchmark_out_format=csv \
-		--benchmark_out=./$(benchmark_stats) &> $(benchmark_aggregates) &
-	tail -f $(benchmark_aggregates)
+		--benchmark_out=./$(benchmark_stats) 2>&1 | tee $(benchmark_aggregates)
 
 run_main: $(main_binary)
 	./$(main_binary)
